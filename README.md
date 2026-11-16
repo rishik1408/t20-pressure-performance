@@ -1,6 +1,6 @@
 # Performance Under Pressure in T20 Cricket: Methodology & Rajasthan Royals IPL 2027 Auction Strategy
 
-[![GitHub Pages](https://img.shields.io/badge/Live_Dashboard-GitHub_Pages-d81b60?style=for-the-badge&logo=github)](https://github.com)
+[![GitHub Pages](https://img.shields.io/badge/Live_Dashboard-GitHub_Pages-d81b60?style=for-the-badge&logo=github)](https://rishik1408.github.io/t20-pressure-performance/)
 [![Methodology Report](https://img.shields.io/badge/Report-Publication_PDF-1a237e?style=for-the-badge&logo=adobeacrobatreader)](docs/methodology_report.pdf)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Matches Analyzed](https://img.shields.io/badge/Matches-842-059669?style=for-the-badge)](#)
@@ -12,9 +12,9 @@ A publication-grade sports analytics system that measures how batters and bowler
 
 ## 🌐 Live Interactive Dashboard & Reports
 
-* **Live GitHub Pages Dashboard:** [View Live Interactive Dashboard](https://github.com)
+* **Live GitHub Pages Dashboard:** [https://rishik1408.github.io/t20-pressure-performance/](https://rishik1408.github.io/t20-pressure-performance/)
+* **Interactive Methodology Report (Live):** [https://rishik1408.github.io/t20-pressure-performance/methodology_report.html](https://rishik1408.github.io/t20-pressure-performance/methodology_report.html)
 * **Publication-Grade Methodology Report (PDF):** [`docs/methodology_report.pdf`](docs/methodology_report.pdf) *(1.69 MB, exactly 9 pages, print-optimized)*
-* **Interactive Methodology Report (HTML):** [`docs/methodology_report.html`](docs/methodology_report.html)
 * **Full Markdown Report:** [`docs/methodology_report.md`](docs/methodology_report.md)
 * **Master Bowlers Rankings (CSV):** [`rankings/rankings_bowlers_master.csv`](rankings/rankings_bowlers_master.csv)
 * **Master Batters Rankings (CSV):** [`rankings/rankings_batters_master.csv`](rankings/rankings_batters_master.csv)
