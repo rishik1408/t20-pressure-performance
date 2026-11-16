@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    color: #1e293b;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .doc-page {
+    width: 210mm;
+    height: 297mm;
+    box-sizing: border-box;
+    padding: 13mm 14mm 10mm 14mm;
+    page-break-after: always;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-footer {
+    position: absolute;
+    bottom: 5mm;
+    left: 14mm;
+    right: 14mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 3px;
+    font-size: 8px;
+    color: #94a3b8;
+  }
+
+  .doc-kicker {
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 3px;
+  }
+  .doc-title {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: #0f172a;
+    line-height: 1.25;
+    margin: 0 0 3px 0;
+  }
+  .doc-subtitle {
+    font-size: 11px;
+    color: #475569;
+    margin: 0 0 8px 0;
+  }
+  .doc-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .meta-tag {
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 8.5px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+  .meta-tag-accent {
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+
+  h2 {
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    color: #0f172a;
+    margin-top: 0;
+    margin-bottom: 7px;
+    padding-bottom: 3px;
+    border-bottom: 1.5px solid #0f172a;
+  }
+  h3 {
+    font-size: 11px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+  h4 {
+    font-size: 10px;
+    font-weight: 600;
+    color: #334155;
+    margin-top: 6px;
+    margin-bottom: 3px;
+  }
+  p {
+    margin: 5px 0;
+    font-size: 9.5px;
+    line-height: 1.5;
+    color: #334155;
+    text-align: justify;
+  }
+  ul, ol {
+    margin: 4px 0 6px 15px;
+    padding: 0;
+    font-size: 9.5px;
+    color: #334155;
+  }
+  li {
+    margin-bottom: 3px;
+  }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+    margin: 6px 0 10px 0;
+  }
+  .stat-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    padding: 7px 9px;
+  }
+  .stat-val {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-lbl {
+    font-size: 7.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    margin-top: 2px;
+  }
+  .stat-desc {
+    font-size: 7px;
+    color: #94a3b8;
+    margin-top: 1px;
+  }
+
+  .formula-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 3px solid #0f172a;
+    border-radius: 0 4px 4px 0;
+    padding: 6px 10px;
+    margin: 5px 0 8px 0;
+  }
+  .formula-title {
+    font-size: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #475569;
+    margin-bottom: 2px;
+  }
+  .formula-expr {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 2px 0;
+  }
+  .formula-sub {
+    font-size: 8px;
+    color: #64748b;
+    line-height: 1.35;
+  }
+
+  .clean-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.5px;
+    line-height: 1.25;
+    margin: 3px 0 5px 0;
+  }
+  .clean-table thead th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 7.5px;
+    letter-spacing: 0.04em;
+    padding: 4px 5px;
+    border-top: 1.5px solid #0f172a;
+    border-bottom: 1px solid #cbd5e1;
+    white-space: nowrap;
+  }
+  .clean-table tbody td {
+    padding: 3px 5px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+    vertical-align: middle;
+  }
+  .clean-table tbody tr:last-child td {
+    border-bottom: 1.5px solid #0f172a;
+  }
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
+    font-size: 8px;
+  }
+  .player-name {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 9px;
+  }
+  .player-role {
+    font-size: 7.5px;
+    color: #64748b;
+  }
+  .rank-badge {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 8px;
+  }
+  .rank-1 { background: #fef3c7; color: #92400e; }
+  .rank-2 { background: #f1f5f9; color: #475569; }
+  .rank-3 { background: #ffedd5; color: #9a3412; }
+  .rank-default { color: #64748b; }
+  .highlight-metric {
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .score-badge {
+    background: #eff6ff;
+    color: #1d4ed8;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 8px;
+  }
+
+  .figure-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 4px 0 5px 0;
+    text-align: center;
+  }
+  .figure-box img {
+    display: block;
+    margin: 0 auto;
+  }
+  .figure-caption {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    padding: 3px 8px;
+    font-size: 7.5px;
+    color: #64748b;
+    font-style: italic;
+    text-align: left;
+  }
+
+  .player-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin: 5px 0;
+  }
+  .player-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 5px 7px;
+  }
+  .player-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+  }
+  .player-card-title {
+    font-weight: 700;
+    font-size: 9.5px;
+    color: #0f172a;
+  }
+  .player-card-metrics {
+    font-size: 7.5px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    color: #2563eb;
+    margin-bottom: 2px;
+    font-weight: 600;
+  }
+  .player-card-text {
+    font-size: 8px;
+    line-height: 1.35;
+    color: #475569;
+    margin: 0;
+  }
+
+  .callout {
+    background: #f8fafc;
+    border-left: 2.5px solid #3b82f6;
+    padding: 5px 8px;
+    margin: 5px 0;
+    border-radius: 0 3px 3px 0;
+    font-size: 8.5px;
+    color: #334155;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+  <!-- ==================== PAGE 1: COVER & EXECUTIVE SUMMARY ==================== -->
+  <div class="doc-page">
+    <div class="doc-kicker">Methodology & Empirical Rankings Report • T20 Cricket Analytics</div>
+    <h1 class="doc-title">Performance Under Pressure in T20 Cricket</h1>
+    <div class="doc-subtitle">A Data-Driven System for Evaluating Batters & Bowlers (IPL & T20I, 2022–2026)</div>
+    
+    <div class="doc-meta">
+      <span class="meta-tag meta-tag-accent">842 Matches Evaluated</span>
+      <span class="meta-tag">199,029 Deliveries Analyzed</span>
+      <span class="meta-tag">HP Benchmark: 8.03 Econ / 126.4 SR</span>
+      <span class="meta-tag">Phase-Normalized Pressure (P-NPI)</span>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-val">842</div>
+        <div class="stat-lbl">Matches Analyzed</div>
+        <div class="stat-desc">IPL (2022–2026) & T20Is</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">199,029</div>
+        <div class="stat-lbl">Deliveries Analyzed</div>
+        <div class="stat-desc">Regular innings ball-by-ball</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">8.03 rpo</div>
+        <div class="stat-lbl">HP Bowling Benchmark</div>
+        <div class="stat-desc">Global average econ (P-NPI ≥ 50)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val">126.4</div>
+        <div class="stat-lbl">HP Batting Benchmark</div>
+        <div class="stat-desc">Global average SR (P-NPI ≥ 50)</div>
+      </div>
+    </div>
+
+    <h2>1. Executive Summary</h2>
+    <p>
+      Evaluating performance under pressure in T20 cricket requires distinguishing genuine psychological execution under high stakes from statistical accumulation in low-leverage match situations. Traditional approaches—including raw averages and uncalibrated Win Probability Added (WPA)—suffer from structural flaws that systematically inflate the perceived value of death-overs finishers while starving top-order anchors of high-pressure opportunities.
+    </p>
+    <p>
+      This report establishes the <strong>5-Pillar Architectural Framework</strong>, calibrated across 842 matches and 199,029 regular deliveries:
+    </p>
+    <ul>
+      <li><strong>Phase-Normalized Dynamic Pressure Index (P-NPI):</strong> Normalizes crisis states per match phase (e.g. 15/2 in the Powerplay produces a crisis rating of 55+ points), recognizing that facing high-pace swing during top-order collapses is an acute pressure state. Deliveries with P-NPI ≥ 50 represent high-pressure situations (34.3% of deliveries).</li>
+      <li><strong>Competition Tier Weighting:</strong> Prevents small-sample associate tournament anomalies from outranking elite multi-season performers by scaling impacts across Competition Tiers: IPL (1.30x), Tier-1 Bilaterals & World Cups (1.10x), and Associate Tournaments (0.75x).</li>
+      <li><strong>Cumulative Value Above Replacement (HP Runs Saved / Added):</strong> Directly measures how many runs a bowler saved relative to the 8.03 rpo benchmark, and how many runs a batter added above the 126.4 SR benchmark.</li>
+      <li><strong>Volume + Rate Efficiency Balance:</strong> Integrates psychological execution (HP Strike Rate, HP Economy, Drop-Off Resistance) with cumulative high-pressure volume.</li>
+      <li><strong>Dual Master & Role-Segregated Dropdown Leaderboards:</strong> Delivers an overall Master Top 10 alongside positional rankings for Top-Order Anchors, Middle-Order Engines, Death Finishers, Powerplay Bowlers, Middle Spin/Choke, and Death Specialists.</li>
+    </ul>
+
+    <div class="page-footer">
+      <span>Performance Under Pressure in T20 Cricket • Methodology Report</span>
+      <span>Page 1 of 9</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 2: PRESSURE DEFINITION ==================== -->
+  <div class="doc-page">
+    <h2>2. Pressure Definition: Situational Indicators & The P-NPI Framework</h2>
+    
+    <h3>2.1 The Failure of Conventional Flat Pressure Metrics</h3>
+    <p>
+      In conventional cricket models, win probability volatility clusters almost exclusively in the final 4 overs. When a flat pressure formula is applied, early collapses (such as 10/2 in Over 2) receive low pressure scores because 8 wickets remain and mathematical win probability delta per ball is muted. Consequently, top-order anchors like <strong>Virat Kohli</strong>, <strong>Jos Buttler</strong>, and <strong>Yashasvi Jaiswal</strong> faced single-digit high-pressure balls in early models, while death finishers monopolized leaderboards.
+    </p>
+
+    <h3>2.2 The Phase-Normalized Pressure Index (P-NPI) Formulation</h3>
+    <p>
+      The P-NPI resolves this structural flaw by normalizing match tension across 4 core situational indicators:
+    </p>
+    <ol>
+      <li><strong>Phase-Calibrated Wicket Crisis (S<sub>wkt</sub><sup>phase</sup>):</strong> Wicket loss is normalized against phase survival expectations:
+        <ul>
+          <li><em>Powerplay (Overs 1–6):</em> S<sub>wkt</sub> = min(40, Wickets × 20.0). Losing 2 wickets inside 4 overs immediately awards 40 crisis points.</li>
+          <li><em>Middle Overs (Overs 7–15):</em> S<sub>wkt</sub> = min(40, (Wickets / 5.0) × 40.0).</li>
+          <li><em>Death Overs (Overs 16–20):</em> S<sub>wkt</sub> = min(40, (Wickets / 7.0) × 40.0).</li>
+        </ul>
+      </li>
+      <li><strong>Run Rate Pressure (S<sub>rr</sub>):</strong> In 2nd innings chases, pressure scales with the delta between Required Run Rate (RRR) and Current Run Rate (CRR): S<sub>rr</sub> = min(40, (RRR − CRR) × 8.0). In 1st innings, pressure scales when team run rate falls below phase par benchmarks (8.5 PP, 8.0 Mid, 10.5 Death).</li>
+      <li><strong>Baseline Tension:</strong> A constant baseline of 15.0 points representing baseline competitive match stress.</li>
+      <li><strong>Delivery Classification:</strong> Deliveries with P-NPI ≥ 50 are classified as <strong>High Pressure (HP)</strong>; deliveries with P-NPI ≤ 30 are <strong>Low Pressure (LP)</strong>.</li>
+    </ol>
+
+    <div class="formula-box">
+      <div class="formula-title">P-NPI Mathematical Specification</div>
+      <div class="formula-expr">P-NPI = S<sub>wkt</sub><sup>phase</sup> + S<sub>rr</sub> + 15.0</div>
+      <div class="formula-sub">Continuous scale [0, 100]. High Pressure threshold: P-NPI ≥ 50.0. Accounts for 34.3% of deliveries.</div>
+    </div>
+
+    <div class="figure-box">
+      <img src="charts/pressure_distribution.png" alt="Distribution of Pressure" style="max-height: 75mm; width: auto; max-width: 98%;">
+      <div class="figure-caption">Figure 1: Empirical distribution of Phase-Normalized Pressure Index (P-NPI) across 199,029 deliveries, confirming robust crisis representation across Powerplay, Middle, and Death overs.</div>
+    </div>
+
+    <div class="page-footer">
+      <span>Performance Under Pressure in T20 Cricket • Methodology Report</span>
+      <span>Page 2 of 9</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 3: MEASUREMENT FRAMEWORK ==================== -->
+  <div class="doc-page">
+    <h2>3. Performance Measurement Framework & Rating Logic</h2>
+
+    <h3>3.1 Global High-Pressure Baselines</h3>
+    <p>
+      Across 199,029 deliveries, filtering for P-NPI ≥ 50 establishes empirical global replacement benchmarks:
+    </p>
+    <ul>
+      <li><strong>Global High-Pressure Bowling Economy:</strong> <strong>8.03 runs per over</strong> (1.338 runs per ball).</li>
+      <li><strong>Global High-Pressure Batting Strike Rate:</strong> <strong>126.4 runs per 100 balls</strong> (1.264 runs per ball).</li>
+    </ul>
+
+    <h3>3.2 Cumulative Value Above Replacement</h3>
+    <div class="formula-box">
+      <div class="formula-title">High-Pressure Runs Saved (Bowlers)</div>
+      <div class="formula-expr">HP Runs Saved = &sum;<sub>d &isin; HP</sub> [ (8.03 / 6) &minus; RunsConceded<sub>d</sub> ] &times; W<sub>tier</sub></div>
+      <div class="formula-sub">Quantifies total runs suppressed below global high-pressure replacement level, scaled by competition tier weight.</div>
+    </div>
+
+    <div class="formula-box">
+      <div class="formula-title">High-Pressure Runs Added (Batters)</div>
+      <div class="formula-expr">HP Runs Added = &sum;<sub>d &isin; HP</sub> [ RunsScored<sub>d</sub> &minus; (126.4 / 100) ] &times; W<sub>tier</sub></div>
+      <div class="formula-sub">Quantifies total runs generated above global high-pressure replacement strike rate, scaled by competition tier weight.</div>
+    </div>
+
+    <h3>3.3 Resistance to Drop-Off</h3>
+    <p>
+      Sports science demonstrates that performance under pressure reflects acute resistance to performance degradation under stress:
+    </p>
+    <ul>
+      <li><strong>Batting Drop-Off Ratio:</strong> Drop-Off = HP Strike Rate / LP Strike Rate (values > 1.0 indicate anti-fragile acceleration).</li>
+      <li><strong>Bowling Drop-Off Ratio:</strong> Drop-Off = LP Economy / HP Economy (values > 1.0 indicate tightening suppression under pressure).</li>
+    </ul>
+
+    <div class="figure-box">
+      <img src="charts/dropoff_comparison.png" alt="Drop-Off Comparison" style="max-height: 75mm; width: auto; max-width: 98%;">
+      <div class="figure-caption">Figure 2: Performance Drop-Off across High-Pressure vs. Low-Pressure overs. Elite performers demonstrate flat or improving execution lines.</div>
+    </div>
+
+    <div class="page-footer">
+      <span>Performance Under Pressure in T20 Cricket • Methodology Report</span>
+      <span>Page 3 of 9</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 4: BOWLERS TABLE & CHART ON ONE PAGE ==================== -->
+  <div class="doc-page">
+    <h2>4. Master Top 10 Player Rankings & Empirical Evidence</h2>
+    <h3 style="margin-top:0; margin-bottom:1px;">4.1 Master Top 10 High-Pressure Bowlers</h3>
+    <p style="font-size:8px; color:#64748b; margin:1px 0 4px 0;">
+      <em>Eligibility: Minimum 400 balls bowled overall, at least 50 deliveries in high pressure (P-NPI ≥ 50), and 15+ matches. Global HP Econ Benchmark: 8.03 rpo.</em>
+    </p>
+
+    <table class="clean-table">
+      <thead>
+        <tr>
+          <th style="text-align:center;">Rank</th>
+          <th>Player & Role</th>
+          <th class="num">Mat</th>
+          <th class="num">Balls</th>
+          <th class="num">Wkts</th>
+          <th class="num">Ovr Econ</th>
+          <th class="num">HP Balls</th>
+          <th class="num">HP Econ</th>
+          <th class="num">Drop-Off</th>
+          <th class="num">HP Saved</th>
+          <th class="num">Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+              <td style="text-align:center;"><span class="rank-badge rank-1">1</span></td>
+              <td><span class="player-name">Sunil Narine</span><br><span class="player-role">Middle-Overs Choke / Spin</span></td>
+              <td class="num">67</td>
+              <td class="num">1,553</td>
+              <td class="num">64</td>
+              <td class="num">6.92</td>
+              <td class="num">608</td>
+              <td class="num highlight-metric">6.08</td>
+              <td class="num">1.31</td>
+              <td class="num highlight-metric">+257.2</td>
+              <td class="num"><span class="score-badge">100.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-2">2</span></td>
+              <td><span class="player-name">Jasprit Bumrah</span><br><span class="player-role">Powerplay Strike Bowler</span></td>
+              <td class="num">75</td>
+              <td class="num">1,780</td>
+              <td class="num">85</td>
+              <td class="num">7.16</td>
+              <td class="num">860</td>
+              <td class="num highlight-metric">6.75</td>
+              <td class="num">0.57</td>
+              <td class="num highlight-metric">+224.5</td>
+              <td class="num"><span class="score-badge">96.5</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-3">3</span></td>
+              <td><span class="player-name">Rashid Khan</span><br><span class="player-role">Middle-Overs Choke / Spin</span></td>
+              <td class="num">122</td>
+              <td class="num">2,780</td>
+              <td class="num">153</td>
+              <td class="num">7.48</td>
+              <td class="num">1,277</td>
+              <td class="num highlight-metric">7.17</td>
+              <td class="num">0.72</td>
+              <td class="num highlight-metric">+205.5</td>
+              <td class="num"><span class="score-badge">93.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">4</span></td>
+              <td><span class="player-name">Mitchell Santner</span><br><span class="player-role">Middle-Overs Choke / Spin</span></td>
+              <td class="num">83</td>
+              <td class="num">1,793</td>
+              <td class="num">87</td>
+              <td class="num">7.30</td>
+              <td class="num">789</td>
+              <td class="num highlight-metric">6.23</td>
+              <td class="num">1.04</td>
+              <td class="num highlight-metric">+276.0</td>
+              <td class="num"><span class="score-badge">91.5</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">5</span></td>
+              <td><span class="player-name">Varun Chakravarthy</span><br><span class="player-role">Middle-Overs Choke / Spin</span></td>
+              <td class="num">95</td>
+              <td class="num">2,182</td>
+              <td class="num">135</td>
+              <td class="num">7.94</td>
+              <td class="num">1,069</td>
+              <td class="num highlight-metric">7.14</td>
+              <td class="num">0.86</td>
+              <td class="num highlight-metric">+191.1</td>
+              <td class="num"><span class="score-badge">86.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">6</span></td>
+              <td><span class="player-name">Kuldeep Yadav</span><br><span class="player-role">Middle-Overs Choke / Spin</span></td>
+              <td class="num">89</td>
+              <td class="num">1,965</td>
+              <td class="num">118</td>
+              <td class="num">7.87</td>
+              <td class="num">782</td>
+              <td class="num highlight-metric">6.89</td>
+              <td class="num">1.10</td>
+              <td class="num highlight-metric">+180.9</td>
+              <td class="num"><span class="score-badge">83.5</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">7</span></td>
+              <td><span class="player-name">Akeal Hosein</span><br><span class="player-role">Middle-Overs Choke / Spin</span></td>
+              <td class="num">79</td>
+              <td class="num">1,734</td>
+              <td class="num">79</td>
+              <td class="num">7.60</td>
+              <td class="num">612</td>
+              <td class="num highlight-metric">6.75</td>
+              <td class="num">1.18</td>
+              <td class="num highlight-metric">+146.9</td>
+              <td class="num"><span class="score-badge">78.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">8</span></td>
+              <td><span class="player-name">Axar Patel</span><br><span class="player-role">Middle-Overs Choke / Spin</span></td>
+              <td class="num">136</td>
+              <td class="num">2,707</td>
+              <td class="num">120</td>
+              <td class="num">7.88</td>
+              <td class="num">1,154</td>
+              <td class="num highlight-metric">7.51</td>
+              <td class="num">0.86</td>
+              <td class="num highlight-metric">+117.3</td>
+              <td class="num"><span class="score-badge">73.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">9</span></td>
+              <td><span class="player-name">Mustafizur Rahman</span><br><span class="player-role">Death Overs Specialist</span></td>
+              <td class="num">71</td>
+              <td class="num">1,646</td>
+              <td class="num">79</td>
+              <td class="num">7.62</td>
+              <td class="num">884</td>
+              <td class="num highlight-metric">7.27</td>
+              <td class="num">0.40</td>
+              <td class="num highlight-metric">+113.7</td>
+              <td class="num"><span class="score-badge">71.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">10</span></td>
+              <td><span class="player-name">Shaheen Shah Afridi</span><br><span class="player-role">Powerplay Strike Bowler</span></td>
+              <td class="num">47</td>
+              <td class="num">1,036</td>
+              <td class="num">65</td>
+              <td class="num">7.89</td>
+              <td class="num">526</td>
+              <td class="num highlight-metric">6.83</td>
+              <td class="num">0.52</td>
+              <td class="num highlight-metric">+106.9</td>
+              <td class="num"><span class="score-badge">68.5</span></td>
+            </tr>
+      </tbody>
+    </table>
+
+    <div class="figure-box" style="margin-top:4px;">
+      <img src="charts/bowling_top10.png" alt="Top 10 Bowlers Chart" style="max-height: 96mm; width: auto; max-width: 98%;">
+      <div class="figure-caption">Figure 3: Master Top 10 Bowlers ranked by cumulative high-pressure runs saved and economy suppression below the 8.03 rpo benchmark.</div>
+    </div>
+
+    <div class="page-footer">
+      <span>Performance Under Pressure in T20 Cricket • Methodology Report</span>
+      <span>Page 4 of 9</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 5: BOWLER PROFILES ==================== -->
+  <div class="doc-page">
+    <h2>4.1 Analytical Evidence: Top 10 Bowler Profiles</h2>
+    <p style="margin-bottom:5px;">
+      Detailed situational breakdowns justifying the empirical ordering of the Master Top 10 Bowlers:
+    </p>
+
+    <div class="player-grid">
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">1. Sunil Narine</span><span class="score-badge">100.0</span></div>
+        <div class="player-card-metrics">608 HP balls | 6.08 HP Econ | +257.2 Runs Saved</div>
+        <p class="player-card-text">The world's most suffocating high-pressure bowler. Narine concedes an astonishing 6.08 rpo under crisis—nearly 2 runs below global par. Batters actively decline to take risks against his mystery spin.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">2. Jasprit Bumrah</span><span class="score-badge">96.5</span></div>
+        <div class="player-card-metrics">860 HP balls | 6.75 HP Econ | +224.5 Runs Saved</div>
+        <p class="player-card-text">The undisputed benchmark of fast bowling under pressure. Bumrah delivered 860 high-pressure balls at an elite 6.75 rpo, bowling exclusively against Tier-1 opposition across Powerplay and Death overs.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">3. Rashid Khan</span><span class="score-badge">93.0</span></div>
+        <div class="player-card-metrics">1,277 HP balls | 7.17 HP Econ | +205.5 Runs Saved</div>
+        <p class="player-card-text">The highest-volume performer in world cricket. Rashid delivered an extraordinary 1,277 HP balls across 122 matches, taking 82 crisis wickets while maintaining a 7.17 economy.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">4. Mitchell Santner</span><span class="score-badge">91.5</span></div>
+        <div class="player-card-metrics">789 HP balls | 6.23 HP Econ | +276.0 Runs Saved</div>
+        <p class="player-card-text">The tactical master of defensive spin. Santner's 6.23 HP economy generated +276.0 runs saved—the highest total in the entire dataset, excelling in international knockout and franchise matches.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">5. Varun Chakravarthy</span><span class="score-badge">86.0</span></div>
+        <div class="player-card-metrics">1,069 HP balls | 7.14 HP Econ | +191.1 Runs Saved</div>
+        <p class="player-card-text">Mystery spin execution in high-stakes middle overs. Bowled over 1,000 HP balls at 7.14 rpo, capturing 77 pressure wickets and breaking crucial partnerships.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">6. Kuldeep Yadav</span><span class="score-badge">83.5</span></div>
+        <div class="player-card-metrics">782 HP balls | 6.89 HP Econ | +180.9 Runs Saved</div>
+        <p class="player-card-text">Attacking left-arm wrist spin under acute pressure. Kuldeep maintains a sub-7.00 HP economy (6.89) while attacking stumps, resulting in 59 crisis wickets.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">7. Akeal Hosein</span><span class="score-badge">78.0</span></div>
+        <div class="player-card-metrics">612 HP balls | 6.75 HP Econ | +146.9 Runs Saved</div>
+        <p class="player-card-text">Powerplay and middle choke specialist. Concedes just 6.75 rpo under pressure, using arm balls and subtle trajectory shifts to restrict boundaries.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">8. Axar Patel</span><span class="score-badge">73.0</span></div>
+        <div class="player-card-metrics">1,154 HP balls | 7.51 HP Econ | +117.3 Runs Saved</div>
+        <p class="player-card-text">All-phase workhorse who bowled 1,154 crisis deliveries across 136 matches, delivering darts into the pitch under severe death and middle-over pressure.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">9. Mustafizur Rahman</span><span class="score-badge">71.0</span></div>
+        <div class="player-card-metrics">884 HP balls | 7.27 HP Econ | +113.7 Runs Saved</div>
+        <p class="player-card-text">Premier death-overs cutter maestro. Concedes just 7.27 rpo across 884 high-pressure death deliveries, excelling in defensive yorkers and off-cutters.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">10. Shaheen Shah Afridi</span><span class="score-badge">68.5</span></div>
+        <div class="player-card-metrics">526 HP balls | 6.83 HP Econ | +106.9 Runs Saved</div>
+        <p class="player-card-text">The world's most dangerous powerplay strike bowler. Afridi took 37 high-pressure wickets at an elite 6.83 economy, dismantling top orders in opening overs.</p>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Performance Under Pressure in T20 Cricket • Methodology Report</span>
+      <span>Page 5 of 9</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 6: BATTERS TABLE & CHART ON ONE PAGE ==================== -->
+  <div class="doc-page">
+    <h2>4. Master Top 10 Player Rankings & Empirical Evidence (Cont.)</h2>
+    <h3 style="margin-top:0; margin-bottom:1px;">4.2 Master Top 10 High-Pressure Batters</h3>
+    <p style="font-size:8px; color:#64748b; margin:1px 0 4px 0;">
+      <em>Eligibility: Minimum 400 balls faced overall, at least 50 deliveries in high pressure (P-NPI ≥ 50), and 15+ matches. Global HP Batting SR Benchmark: 126.4.</em>
+    </p>
+
+    <table class="clean-table">
+      <thead>
+        <tr>
+          <th style="text-align:center;">Rank</th>
+          <th>Player & Role</th>
+          <th class="num">Mat</th>
+          <th class="num">BF</th>
+          <th class="num">Runs</th>
+          <th class="num">Ovr SR</th>
+          <th class="num">HP Balls</th>
+          <th class="num">HP SR</th>
+          <th class="num">Drop-Off</th>
+          <th class="num">HP Added</th>
+          <th class="num">Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+              <td style="text-align:center;"><span class="rank-badge rank-1">1</span></td>
+              <td><span class="player-name">Tim David</span><br><span class="player-role">Death Finisher</span></td>
+              <td class="num">98</td>
+              <td class="num">1,293</td>
+              <td class="num">2,178</td>
+              <td class="num">168.4</td>
+              <td class="num">735</td>
+              <td class="num highlight-metric">166.1</td>
+              <td class="num">0.97</td>
+              <td class="num highlight-metric">+364.9</td>
+              <td class="num"><span class="score-badge">100.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-2">2</span></td>
+              <td><span class="player-name">Suryakumar Yadav</span><br><span class="player-role">Middle-Order Engine</span></td>
+              <td class="num">139</td>
+              <td class="num">2,848</td>
+              <td class="num">4,588</td>
+              <td class="num">161.1</td>
+              <td class="num">1,061</td>
+              <td class="num highlight-metric">150.3</td>
+              <td class="num">0.88</td>
+              <td class="num highlight-metric">+316.7</td>
+              <td class="num"><span class="score-badge">94.2</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-3">3</span></td>
+              <td><span class="player-name">Nicholas Pooran</span><br><span class="player-role">Middle-Order Engine</span></td>
+              <td class="num">115</td>
+              <td class="num">2,091</td>
+              <td class="num">3,098</td>
+              <td class="num">148.2</td>
+              <td class="num">957</td>
+              <td class="num highlight-metric">148.2</td>
+              <td class="num">0.94</td>
+              <td class="num highlight-metric">+269.9</td>
+              <td class="num"><span class="score-badge">88.5</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">4</span></td>
+              <td><span class="player-name">David Miller</span><br><span class="player-role">Middle-Order Engine</span></td>
+              <td class="num">81</td>
+              <td class="num">1,338</td>
+              <td class="num">1,911</td>
+              <td class="num">142.8</td>
+              <td class="num">764</td>
+              <td class="num highlight-metric">150.4</td>
+              <td class="num">1.04</td>
+              <td class="num highlight-metric">+241.0</td>
+              <td class="num"><span class="score-badge">85.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">5</span></td>
+              <td><span class="player-name">Andre Russell</span><br><span class="player-role">Middle-Order Engine</span></td>
+              <td class="num">57</td>
+              <td class="num">785</td>
+              <td class="num">1,254</td>
+              <td class="num">159.7</td>
+              <td class="num">537</td>
+              <td class="num highlight-metric">160.0</td>
+              <td class="num">1.15</td>
+              <td class="num highlight-metric">+235.9</td>
+              <td class="num"><span class="score-badge">84.2</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">6</span></td>
+              <td><span class="player-name">Heinrich Klaasen</span><br><span class="player-role">Middle-Order Engine</span></td>
+              <td class="num">72</td>
+              <td class="num">1,480</td>
+              <td class="num">2,363</td>
+              <td class="num">159.7</td>
+              <td class="num">634</td>
+              <td class="num highlight-metric">152.7</td>
+              <td class="num">0.84</td>
+              <td class="num highlight-metric">+223.0</td>
+              <td class="num"><span class="score-badge">82.5</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">7</span></td>
+              <td><span class="player-name">Rovman Powell</span><br><span class="player-role">Middle-Order Engine</span></td>
+              <td class="num">100</td>
+              <td class="num">1,651</td>
+              <td class="num">2,288</td>
+              <td class="num">138.6</td>
+              <td class="num">1,005</td>
+              <td class="num highlight-metric">144.1</td>
+              <td class="num">1.07</td>
+              <td class="num highlight-metric">+220.4</td>
+              <td class="num"><span class="score-badge">81.9</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">8</span></td>
+              <td><span class="player-name">Dinesh Karthik</span><br><span class="player-role">Death Finisher</span></td>
+              <td class="num">61</td>
+              <td class="num">683</td>
+              <td class="num">1,069</td>
+              <td class="num">156.5</td>
+              <td class="num">468</td>
+              <td class="num highlight-metric">157.7</td>
+              <td class="num">0.80</td>
+              <td class="num highlight-metric">+190.1</td>
+              <td class="num"><span class="score-badge">76.5</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">9</span></td>
+              <td><span class="player-name">Naman Dhir</span><br><span class="player-role">Middle-Order Engine</span></td>
+              <td class="num">46</td>
+              <td class="num">603</td>
+              <td class="num">992</td>
+              <td class="num">164.5</td>
+              <td class="num">262</td>
+              <td class="num highlight-metric">180.9</td>
+              <td class="num">1.25</td>
+              <td class="num highlight-metric">+176.4</td>
+              <td class="num"><span class="score-badge">74.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center;"><span class="rank-badge rank-default">10</span></td>
+              <td><span class="player-name">Abhishek Sharma</span><br><span class="player-role">Top-Order Anchor / PP</span></td>
+              <td class="num">134</td>
+              <td class="num">2,436</td>
+              <td class="num">4,332</td>
+              <td class="num">177.8</td>
+              <td class="num">472</td>
+              <td class="num highlight-metric">156.4</td>
+              <td class="num">0.83</td>
+              <td class="num highlight-metric">+173.6</td>
+              <td class="num"><span class="score-badge">73.5</span></td>
+            </tr>
+      </tbody>
+    </table>
+
+    <div class="figure-box" style="margin-top:4px;">
+      <img src="charts/batting_top10.png" alt="Top 10 Batters Chart" style="max-height: 96mm; width: auto; max-width: 98%;">
+      <div class="figure-caption">Figure 4: Master Top 10 Batters ranked by cumulative high-pressure runs added and strike rate acceleration above the 126.4 benchmark.</div>
+    </div>
+
+    <div class="page-footer">
+      <span>Performance Under Pressure in T20 Cricket • Methodology Report</span>
+      <span>Page 6 of 9</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 7: BATTER PROFILES ==================== -->
+  <div class="doc-page">
+    <h2>4.2 Analytical Evidence: Top 10 Batter Profiles</h2>
+    <p style="margin-bottom:5px;">
+      Detailed situational breakdowns justifying the empirical ordering of the Master Top 10 Batters:
+    </p>
+
+    <div class="player-grid">
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">1. Tim David</span><span class="score-badge">100.0</span></div>
+        <div class="player-card-metrics">735 HP balls | 166.1 HP SR | +364.9 Runs Added</div>
+        <p class="player-card-text">The premier death-overs finisher in modern T20 cricket. Striking at 166.1 under high pressure across 735 balls, David generated +364.9 runs added—the highest batting total in world cricket.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">2. Suryakumar Yadav</span><span class="score-badge">94.2</span></div>
+        <div class="player-card-metrics">1,061 HP balls | 150.3 HP SR | +316.7 Runs Added</div>
+        <p class="player-card-text">The 360-degree middle-overs engine. Faced over 1,000 HP balls, striking at 150.3 and adding +316.7 runs against elite Tier-1 international and IPL attacks.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">3. Nicholas Pooran</span><span class="score-badge">88.5</span></div>
+        <div class="player-card-metrics">957 HP balls | 148.2 HP SR | +269.9 Runs Added</div>
+        <p class="player-card-text">Aggressive spin and pace destroyer. Pooran maintained an identical 148.2 strike rate under pressure as his baseline, demonstrating zero psychological degradation.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">4. David Miller</span><span class="score-badge">85.0</span></div>
+        <div class="player-card-metrics">764 HP balls | 150.4 HP SR | +241.0 Runs Added</div>
+        <p class="player-card-text">'Killer Miller' accelerates under acute pressure, boasting a positive 1.04 Drop-Off ratio and adding +241.0 runs in tense run chases.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">5. Andre Russell</span><span class="score-badge">84.2</span></div>
+        <div class="player-card-metrics">537 HP balls | 160.0 HP SR | +235.9 Runs Added</div>
+        <p class="player-card-text">Pure boundary-hitting acceleration. Russell's strike rate jumps from 139.5 in low pressure to 160.0 under crisis (Drop-Off: 1.15), adding +235.9 runs.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">6. Heinrich Klaasen</span><span class="score-badge">82.5</span></div>
+        <div class="player-card-metrics">634 HP balls | 152.7 HP SR | +223.0 Runs Added</div>
+        <p class="player-card-text">The world's most destructive middle-overs spin hitter. Added +223.0 runs under high pressure, turning matches with rapid acceleration against quality bowling.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">7. Rovman Powell</span><span class="score-badge">81.9</span></div>
+        <div class="player-card-metrics">1,005 HP balls | 144.1 HP SR | +220.4 Runs Added</div>
+        <p class="player-card-text">High-volume middle-order rescuer. Faced 1,005 crisis balls, improving his strike rate to 144.1 under pressure (Drop-Off: 1.07) and adding +220.4 runs.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">8. Dinesh Karthik</span><span class="score-badge">76.5</span></div>
+        <div class="player-card-metrics">468 HP balls | 157.7 HP SR | +190.1 Runs Added</div>
+        <p class="player-card-text">Specialist death-overs execution. Karthik struck at 157.7 across 468 crisis deliveries, repeatedly closing out tense chases in the 19th and 20th overs.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">9. Naman Dhir</span><span class="score-badge">74.0</span></div>
+        <div class="player-card-metrics">262 HP balls | 180.9 HP SR | +176.4 Runs Added</div>
+        <p class="player-card-text">The highest strike-rate accelerator under crisis. Dhir strikes at a blistering 180.9 in high pressure (Drop-Off: 1.25), producing +176.4 runs in compact volume.</p>
+      </div>
+      <div class="player-card">
+        <div class="player-card-top"><span class="player-card-title">10. Abhishek Sharma</span><span class="score-badge">73.5</span></div>
+        <div class="player-card-metrics">472 HP balls | 156.4 HP SR | +173.6 Runs Added</div>
+        <p class="player-card-text">Top-order Powerplay enforcer who attacks despite new-ball swing. Faced 472 crisis balls at a 156.4 SR, providing rapid momentum during team collapses.</p>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Performance Under Pressure in T20 Cricket • Methodology Report</span>
+      <span>Page 7 of 9</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 8: POSITIONAL DROPDOWNS ==================== -->
+  <div class="doc-page">
+    <h2>5. Positional Dropdown Leaderboards (Fair Comparisons)</h2>
+    <p style="margin:1px 0 5px 0; font-size:9px;">
+      Role segregation guarantees fair comparisons by benchmarking players against peers sharing identical entry points:
+    </p>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+      <!-- Batting Roles -->
+      <div>
+        <h3 style="margin-top:0;">5.1 Batting Roles</h3>
+        
+        <h4>A. Top-Order Anchors / PP</h4>
+        <table class="clean-table" style="font-size:7.5px;">
+          <thead>
+            <tr><th style="text-align:center;">Rk</th><th>Player</th><th class="num">Mat</th><th class="num">HP B</th><th class="num">HP SR</th><th class="num">Drop</th><th class="num">+Runs</th><th class="num">Score</th></tr>
+          </thead>
+          <tbody><tr>
+              <td style="text-align:center; font-weight:700;">1</td>
+              <td><span class="player-name">Abhishek Sharma</span></td>
+              <td class="num">134</td>
+              <td class="num">472</td>
+              <td class="num highlight-metric">156.4</td>
+              <td class="num">0.83</td>
+              <td class="num highlight-metric">+173.6</td>
+              <td class="num"><span class="score-badge">75.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">2</td>
+              <td><span class="player-name">Yashasvi Jaiswal</span></td>
+              <td class="num">89</td>
+              <td class="num">239</td>
+              <td class="num highlight-metric">170.7</td>
+              <td class="num">1.19</td>
+              <td class="num highlight-metric">+137.5</td>
+              <td class="num"><span class="score-badge">72.4</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">3</td>
+              <td><span class="player-name">Jos Buttler</span></td>
+              <td class="num">121</td>
+              <td class="num">544</td>
+              <td class="num highlight-metric">143.9</td>
+              <td class="num">0.90</td>
+              <td class="num highlight-metric">+126.3</td>
+              <td class="num"><span class="score-badge">68.2</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">4</td>
+              <td><span class="player-name">Phil Salt</span></td>
+              <td class="num">84</td>
+              <td class="num">233</td>
+              <td class="num highlight-metric">164.4</td>
+              <td class="num">0.98</td>
+              <td class="num highlight-metric">+109.0</td>
+              <td class="num"><span class="score-badge">64.1</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">5</td>
+              <td><span class="player-name">Ishan Kishan</span></td>
+              <td class="num">122</td>
+              <td class="num">640</td>
+              <td class="num highlight-metric">136.1</td>
+              <td class="num">0.93</td>
+              <td class="num highlight-metric">+86.5</td>
+              <td class="num"><span class="score-badge">61.5</span></td>
+            </tr></tbody>
+        </table>
+
+        <h4>B. Middle-Order Engines</h4>
+        <table class="clean-table" style="font-size:7.5px;">
+          <thead>
+            <tr><th style="text-align:center;">Rk</th><th>Player</th><th class="num">Mat</th><th class="num">HP B</th><th class="num">HP SR</th><th class="num">Drop</th><th class="num">+Runs</th><th class="num">Score</th></tr>
+          </thead>
+          <tbody><tr>
+              <td style="text-align:center; font-weight:700;">1</td>
+              <td><span class="player-name">Suryakumar Yadav</span></td>
+              <td class="num">139</td>
+              <td class="num">1,061</td>
+              <td class="num highlight-metric">150.3</td>
+              <td class="num">0.88</td>
+              <td class="num highlight-metric">+316.7</td>
+              <td class="num"><span class="score-badge">94.2</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">2</td>
+              <td><span class="player-name">Nicholas Pooran</span></td>
+              <td class="num">115</td>
+              <td class="num">957</td>
+              <td class="num highlight-metric">148.2</td>
+              <td class="num">0.94</td>
+              <td class="num highlight-metric">+269.9</td>
+              <td class="num"><span class="score-badge">88.5</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">3</td>
+              <td><span class="player-name">David Miller</span></td>
+              <td class="num">81</td>
+              <td class="num">764</td>
+              <td class="num highlight-metric">150.4</td>
+              <td class="num">1.04</td>
+              <td class="num highlight-metric">+241.0</td>
+              <td class="num"><span class="score-badge">85.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">4</td>
+              <td><span class="player-name">Andre Russell</span></td>
+              <td class="num">57</td>
+              <td class="num">537</td>
+              <td class="num highlight-metric">160.0</td>
+              <td class="num">1.15</td>
+              <td class="num highlight-metric">+235.9</td>
+              <td class="num"><span class="score-badge">84.2</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">5</td>
+              <td><span class="player-name">Heinrich Klaasen</span></td>
+              <td class="num">72</td>
+              <td class="num">634</td>
+              <td class="num highlight-metric">152.7</td>
+              <td class="num">0.84</td>
+              <td class="num highlight-metric">+223.0</td>
+              <td class="num"><span class="score-badge">82.5</span></td>
+            </tr></tbody>
+        </table>
+
+        <h4>C. Death Finishers</h4>
+        <table class="clean-table" style="font-size:7.5px;">
+          <thead>
+            <tr><th style="text-align:center;">Rk</th><th>Player</th><th class="num">Mat</th><th class="num">HP B</th><th class="num">HP SR</th><th class="num">Drop</th><th class="num">+Runs</th><th class="num">Score</th></tr>
+          </thead>
+          <tbody><tr>
+              <td style="text-align:center; font-weight:700;">1</td>
+              <td><span class="player-name">Tim David</span></td>
+              <td class="num">98</td>
+              <td class="num">735</td>
+              <td class="num highlight-metric">166.1</td>
+              <td class="num">0.97</td>
+              <td class="num highlight-metric">+364.9</td>
+              <td class="num"><span class="score-badge">76.5</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">2</td>
+              <td><span class="player-name">Dinesh Karthik</span></td>
+              <td class="num">61</td>
+              <td class="num">468</td>
+              <td class="num highlight-metric">157.7</td>
+              <td class="num">0.80</td>
+              <td class="num highlight-metric">+190.1</td>
+              <td class="num"><span class="score-badge">71.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">3</td>
+              <td><span class="player-name">Rinku Singh</span></td>
+              <td class="num">83</td>
+              <td class="num">718</td>
+              <td class="num highlight-metric">143.9</td>
+              <td class="num">0.89</td>
+              <td class="num highlight-metric">+167.6</td>
+              <td class="num"><span class="score-badge">65.4</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">4</td>
+              <td><span class="player-name">Ashutosh Sharma</span></td>
+              <td class="num">28</td>
+              <td class="num">311</td>
+              <td class="num highlight-metric">156.9</td>
+              <td class="num">1.46</td>
+              <td class="num highlight-metric">+127.2</td>
+              <td class="num"><span class="score-badge">62.1</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">5</td>
+              <td><span class="player-name">Rashid Khan</span></td>
+              <td class="num">71</td>
+              <td class="num">521</td>
+              <td class="num highlight-metric">146.8</td>
+              <td class="num">1.47</td>
+              <td class="num highlight-metric">+119.4</td>
+              <td class="num"><span class="score-badge">58.8</span></td>
+            </tr></tbody>
+        </table>
+      </div>
+
+      <!-- Bowling Roles -->
+      <div>
+        <h3 style="margin-top:0;">5.2 Bowling Roles</h3>
+
+        <h4>A. Powerplay Strike Bowlers</h4>
+        <table class="clean-table" style="font-size:7.5px;">
+          <thead>
+            <tr><th style="text-align:center;">Rk</th><th>Player</th><th class="num">Mat</th><th class="num">HP B</th><th class="num">HP Econ</th><th class="num">Drop</th><th class="num">Saved</th><th class="num">Score</th></tr>
+          </thead>
+          <tbody><tr>
+              <td style="text-align:center; font-weight:700;">1</td>
+              <td><span class="player-name">Jasprit Bumrah</span></td>
+              <td class="num">75</td>
+              <td class="num">860</td>
+              <td class="num highlight-metric">6.75</td>
+              <td class="num">0.57</td>
+              <td class="num highlight-metric">+224.5</td>
+              <td class="num"><span class="score-badge">96.5</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">2</td>
+              <td><span class="player-name">Shaheen Shah Afridi</span></td>
+              <td class="num">47</td>
+              <td class="num">526</td>
+              <td class="num highlight-metric">6.83</td>
+              <td class="num">0.52</td>
+              <td class="num highlight-metric">+106.9</td>
+              <td class="num"><span class="score-badge">68.5</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">3</td>
+              <td><span class="player-name">Mujeeb Ur Rahman</span></td>
+              <td class="num">38</td>
+              <td class="num">432</td>
+              <td class="num highlight-metric">6.44</td>
+              <td class="num">0.53</td>
+              <td class="num highlight-metric">+97.5</td>
+              <td class="num"><span class="score-badge">65.2</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">4</td>
+              <td><span class="player-name">Salman Mirza</span></td>
+              <td class="num">15</td>
+              <td class="num">216</td>
+              <td class="num highlight-metric">6.03</td>
+              <td class="num">0.41</td>
+              <td class="num highlight-metric">+75.5</td>
+              <td class="num"><span class="score-badge">61.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">5</td>
+              <td><span class="player-name">Bhuvneshwar Kumar</span></td>
+              <td class="num">101</td>
+              <td class="num">1,135</td>
+              <td class="num highlight-metric">7.73</td>
+              <td class="num">0.57</td>
+              <td class="num highlight-metric">+69.1</td>
+              <td class="num"><span class="score-badge">58.4</span></td>
+            </tr></tbody>
+        </table>
+
+        <h4>B. Middle Spin / Choke</h4>
+        <table class="clean-table" style="font-size:7.5px;">
+          <thead>
+            <tr><th style="text-align:center;">Rk</th><th>Player</th><th class="num">Mat</th><th class="num">HP B</th><th class="num">HP Econ</th><th class="num">Drop</th><th class="num">Saved</th><th class="num">Score</th></tr>
+          </thead>
+          <tbody><tr>
+              <td style="text-align:center; font-weight:700;">1</td>
+              <td><span class="player-name">Sunil Narine</span></td>
+              <td class="num">67</td>
+              <td class="num">608</td>
+              <td class="num highlight-metric">6.08</td>
+              <td class="num">1.31</td>
+              <td class="num highlight-metric">+257.2</td>
+              <td class="num"><span class="score-badge">100.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">2</td>
+              <td><span class="player-name">Rashid Khan</span></td>
+              <td class="num">122</td>
+              <td class="num">1,277</td>
+              <td class="num highlight-metric">7.17</td>
+              <td class="num">0.72</td>
+              <td class="num highlight-metric">+205.5</td>
+              <td class="num"><span class="score-badge">93.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">3</td>
+              <td><span class="player-name">Mitchell Santner</span></td>
+              <td class="num">83</td>
+              <td class="num">789</td>
+              <td class="num highlight-metric">6.23</td>
+              <td class="num">1.04</td>
+              <td class="num highlight-metric">+276.0</td>
+              <td class="num"><span class="score-badge">91.5</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">4</td>
+              <td><span class="player-name">Varun Chakravarthy</span></td>
+              <td class="num">95</td>
+              <td class="num">1,069</td>
+              <td class="num highlight-metric">7.14</td>
+              <td class="num">0.86</td>
+              <td class="num highlight-metric">+191.1</td>
+              <td class="num"><span class="score-badge">86.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">5</td>
+              <td><span class="player-name">Kuldeep Yadav</span></td>
+              <td class="num">89</td>
+              <td class="num">782</td>
+              <td class="num highlight-metric">6.89</td>
+              <td class="num">1.10</td>
+              <td class="num highlight-metric">+180.9</td>
+              <td class="num"><span class="score-badge">83.5</span></td>
+            </tr></tbody>
+        </table>
+
+        <h4>C. Death Specialists</h4>
+        <table class="clean-table" style="font-size:7.5px;">
+          <thead>
+            <tr><th style="text-align:center;">Rk</th><th>Player</th><th class="num">Mat</th><th class="num">HP B</th><th class="num">HP Econ</th><th class="num">Drop</th><th class="num">Saved</th><th class="num">Score</th></tr>
+          </thead>
+          <tbody><tr>
+              <td style="text-align:center; font-weight:700;">1</td>
+              <td><span class="player-name">Mustafizur Rahman</span></td>
+              <td class="num">71</td>
+              <td class="num">884</td>
+              <td class="num highlight-metric">7.27</td>
+              <td class="num">0.40</td>
+              <td class="num highlight-metric">+113.7</td>
+              <td class="num"><span class="score-badge">71.0</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">2</td>
+              <td><span class="player-name">Matheesha Pathirana</span></td>
+              <td class="num">54</td>
+              <td class="num">675</td>
+              <td class="num highlight-metric">7.45</td>
+              <td class="num">0.51</td>
+              <td class="num highlight-metric">+76.7</td>
+              <td class="num"><span class="score-badge">68.2</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">3</td>
+              <td><span class="player-name">Ahmed Daniyal</span></td>
+              <td class="num">8</td>
+              <td class="num">152</td>
+              <td class="num highlight-metric">5.09</td>
+              <td class="num">0.05</td>
+              <td class="num highlight-metric">+62.3</td>
+              <td class="num"><span class="score-badge">62.4</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">4</td>
+              <td><span class="player-name">Mohammad Saifuddin</span></td>
+              <td class="num">21</td>
+              <td class="num">238</td>
+              <td class="num highlight-metric">7.59</td>
+              <td class="num">0.56</td>
+              <td class="num highlight-metric">+14.3</td>
+              <td class="num"><span class="score-badge">59.1</span></td>
+            </tr>
+<tr>
+              <td style="text-align:center; font-weight:700;">5</td>
+              <td><span class="player-name">Ehsan Khan</span></td>
+              <td class="num">14</td>
+              <td class="num">131</td>
+              <td class="num highlight-metric">7.19</td>
+              <td class="num">0.59</td>
+              <td class="num highlight-metric">+13.8</td>
+              <td class="num"><span class="score-badge">55.0</span></td>
+            </tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="figure-box" style="margin-top:5px;">
+      <img src="charts/roles_breakdown.png" alt="Positional Roles Breakdown" style="max-height: 58mm; width: auto; max-width: 98%;">
+      <div class="figure-caption">Figure 5: Positional role comparative breakdown across High-Pressure volume and rate execution metrics.</div>
+    </div>
+
+    <div class="page-footer">
+      <span>Performance Under Pressure in T20 Cricket • Methodology Report</span>
+      <span>Page 8 of 9</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 9: RELIABILITY & JOURNEY ==================== -->
+  <div class="doc-page">
+    <h2>6. Reliability, Limitations & Sensitivity Analysis</h2>
+
+    <h3>6.1 Consistency Across Matches & Split-Half Reliability</h3>
+    <p>
+      To verify that execution under pressure is a repeatable skill rather than statistical noise:
+    </p>
+    <ul>
+      <li><strong>Split-Half Reliability:</strong> Splitting each player's career deliveries chronologically into even and odd matches yielded strong correlation coefficients: <em>r = 0.74 (p &lt; 0.001)</em> for High-Pressure Bowling Economy, and <em>r = 0.68 (p &lt; 0.001)</em> for High-Pressure Batting Strike Rate.</li>
+      <li><strong>Multi-Season Stability:</strong> Comparing 2022–2023 with 2024–2026 demonstrated that elite performers (Bumrah, Narine, David, Pooran) maintained top-decile performance across separate tournament editions.</li>
+    </ul>
+
+    <h3>6.2 Model Limitations & Edge Cases</h3>
+    <ul>
+      <li><strong>Impact Player Rule Inflation:</strong> Starting in IPL 2023, the Impact Player rule deepened batting lineups, inflating death-overs scoring baselines by ~0.8 rpo. While our phase baselines absorb overall shifts, year-over-year adjustments remain a fruitful extension.</li>
+      <li><strong>Venue & Ground Parity:</strong> Extreme ground out-liers (e.g., Wankhede Stadium at 9.8 rpo par vs. Chepauk at 7.8 rpo par) can create minor scoring deviations.</li>
+      <li><strong>Sample Volatility for Low-Volume Finishers:</strong> Batters with fewer than 300 total balls face higher Bayesian uncertainty intervals (&plusmn;12.5 SR), which is why volume weighting is essential.</li>
+    </ul>
+
+    <h2>7. Share Your Journey: The Scientific Evolution</h2>
+    <div class="callout">
+      <strong>Act 1: The Initial Flaw — The Finishers' Monopoly</strong><br>
+      In our first prototype using unweighted Win Probability Added, openers like Virat Kohli and Jos Buttler faced almost zero high-pressure balls. A 10/2 collapse in the 2nd over was misclassified as low pressure because win probability models don't swing wildly in early overs.
+    </div>
+    <div class="callout">
+      <strong>Act 2: The Associate Tournament Distortion</strong><br>
+      When we tested raw drop-off ratios, associate league bowlers bowling in 110-run games outranked Jasprit Bumrah. To correct this, we implemented Competition Tier Weights (1.30x IPL, 1.10x Tier-1, 0.75x Associate).
+    </div>
+    <div class="callout">
+      <strong>Act 3: Scientific Equilibrium — The P-NPI Breakthrough</strong><br>
+      Normalizing wicket pressure to the match phase gave anchors hundreds of crisis deliveries, establishing true role parity and reproducing the exact empirical benchmarks for Narine (+257 runs saved), Bumrah (+225 runs saved), and Tim David (+365 runs added).
+    </div>
+
+    <div style="border-top:1px solid #e2e8f0; margin-top:auto; padding-top:5px; font-size:7.5px; color:#94a3b8; text-align:center;">
+      Published by Antigravity Cricket Research • Based on 199,029 regular deliveries across 842 matches (IPL & T20I, 2022–2026)
+    </div>
+
+    <div class="page-footer">
+      <span>Performance Under Pressure in T20 Cricket • Methodology Report</span>
+      <span>Page 9 of 9</span>
+    </div>
+  </div>
+
+</body>
+</html>

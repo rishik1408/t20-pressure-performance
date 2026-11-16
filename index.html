@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rajasthan Royals • IPL 2027 Auction Intelligence Dashboard</title>
+<style>
+  :root {
+    --rr-pink: #d81b60;
+    --rr-pink-light: #fce4ec;
+    --rr-blue: #1a237e;
+    --rr-blue-light: #e8eaf6;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+    --border-color: #e2e8f0;
+    --accent: #2563eb;
+    --success: #059669;
+    --success-bg: #ecfdf5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.55;
+    font-size: 13px;
+    padding-bottom: 50px;
+  }
+
+  /* Header */
+  header {
+    background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #d81b60 100%);
+    color: #ffffff;
+    padding: 24px 32px 20px 32px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+  }
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .header-titles h1 {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-badge {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.35);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .header-titles p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    margin-top: 4px;
+  }
+  .header-links {
+    display: flex;
+    gap: 10px;
+  }
+  .btn-link {
+    background: #ffffff;
+    color: var(--rr-blue);
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 11.5px;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  }
+  .btn-link:hover {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+  }
+  .btn-secondary {
+    background: rgba(255,255,255,0.15);
+    color: #ffffff;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.25);
+  }
+
+  /* Stat Banner */
+  .stat-strip {
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 32px;
+  }
+  .stat-strip-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .strip-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .strip-val {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--rr-blue);
+    font-variant-numeric: tabular-nums;
+  }
+  .strip-lbl {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+  }
+
+  /* Nav Tabs */
+  .nav-bar {
+    max-width: 1200px;
+    margin: 20px auto 16px auto;
+    padding: 0 16px;
+    display: flex;
+    gap: 8px;
+    border-bottom: 2px solid var(--border-color);
+  }
+  .nav-tab {
+    padding: 10px 18px;
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+  }
+  .nav-tab:hover {
+    color: var(--rr-blue);
+  }
+  .nav-tab.active {
+    color: var(--rr-blue);
+    border-bottom-color: var(--rr-pink);
+  }
+
+  /* Container */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  .tab-pane {
+    display: none;
+  }
+  .tab-pane.active {
+    display: block;
+    animation: fadeIn 0.25s ease-in-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Section Styling */
+  .section-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  }
+  .section-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Tables */
+  .table-responsive {
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+    text-align: left;
+  }
+  table.data-table thead th {
+    background: #f1f5f9;
+    color: var(--text-secondary);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    padding: 8px 10px;
+    border-top: 1.5px solid var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+  }
+  table.data-table tbody td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+  table.data-table tbody tr:hover {
+    background: #f8fafc;
+  }
+  .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+  }
+  .player-cell {
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .role-sub {
+    font-size: 9.5px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+  .badge-rank {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 10px;
+  }
+  .rk-1 { background: #fef3c7; color: #92400e; }
+  .rk-2 { background: #e2e8f0; color: #334155; }
+  .rk-3 { background: #ffedd5; color: #9a3412; }
+  .rk-other { color: var(--text-secondary); }
+  .score-pill {
+    background: #eff6ff;
+    color: #1d4ed8;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 800;
+    font-size: 10.5px;
+  }
+  .rr-target-pill {
+    background: #fce4ec;
+    color: #c2185b;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 9.5px;
+    text-transform: uppercase;
+  }
+
+  /* Grid Cards for Targets */
+  .targets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 16px;
+    margin-top: 14px;
+  }
+  .target-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    border-top: 4px solid var(--rr-pink);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .target-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.06);
+  }
+  .target-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .target-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--rr-blue);
+  }
+  .target-priority {
+    font-size: 9.5px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .p-tier1 { background: #dcfce7; color: #166534; }
+  .p-tier2 { background: #e0f2fe; color: #075985; }
+  .p-steal { background: #fef3c7; color: #92400e; }
+  .target-stats {
+    display: flex;
+    gap: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 5px;
+    padding: 8px 10px;
+    margin: 8px 0 10px 0;
+    font-size: 11px;
+    font-family: "SF Mono", Menlo, monospace;
+  }
+  .target-fit {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .target-fit strong {
+    color: var(--text-primary);
+  }
+
+  /* Formula Callout */
+  .formula-callout {
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--rr-blue);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  /* Best XI Box */
+  .best-xi-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+    border: 1.5px solid var(--rr-blue);
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 16px;
+  }
+  .xi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .xi-slot {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .xi-pos {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--rr-pink);
+    text-transform: uppercase;
+  }
+  .xi-player {
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .xi-type {
+    font-size: 9px;
+    color: var(--text-muted);
+  }
+
+  footer {
+    text-align: center;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <div class="header-titles">
+        <h1>Rajasthan Royals <span class="header-badge">IPL 2027 Auction Intelligence</span></h1>
+        <p>Phase-Normalized Pressure Analytics & Tactical Squad Reinforcement Strategy</p>
+      </div>
+      <div class="header-links">
+        <a href="methodology_report.pdf" class="btn-link" target="_blank">📄 Download Methodology PDF</a>
+        <a href="methodology_report.html" class="btn-link btn-secondary" target="_blank">📑 Full Methodology Report</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Metric Strip -->
+  <div class="stat-strip">
+    <div class="stat-strip-inner">
+      <div class="strip-item">
+        <span class="strip-val">842</span>
+        <span class="strip-lbl">Matches Analyzed (IPL & T20I)</span>
+      </div>
+      <div class="strip-item">
+        <span class="strip-val">199,029</span>
+        <span class="strip-lbl">Regular Deliveries Processed</span>
+      </div>
+      <div class="strip-item">
+        <span class="strip-val">8.03 rpo</span>
+        <span class="strip-lbl">Global HP Bowling Benchmark</span>
+      </div>
+      <div class="strip-item">
+        <span class="strip-val">126.4</span>
+        <span class="strip-lbl">Global HP Batting Benchmark</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="nav-bar">
+    <div class="nav-tab active" onclick="showTab('rr-strategy')">🎯 RR 2027 Auction Targets</div>
+    <div class="nav-tab" onclick="showTab('bowlers-top10')">🏏 Most Reliable Bowlers</div>
+    <div class="nav-tab" onclick="showTab('batters-top10')">💥 Most Reliable Batters</div>
+    <div class="nav-tab" onclick="showTab('methodology')">📐 P-NPI Methodology</div>
+  </div>
+
+  <div class="container">
+
+    <!-- ==================== TAB 1: RR AUCTION STRATEGY ==================== -->
+    <div id="rr-strategy" class="tab-pane active">
+
+      <!-- Executive Strategic Diagnosis -->
+      <div class="section-card">
+        <div class="section-title">
+          <span>Rajasthan Royals: Squad Diagnosis & Tactical Objectives for IPL 2027</span>
+          <span class="rr-target-pill">Targeting High-Pressure Excellence</span>
+        </div>
+        <p>
+          Entering the IPL 2027 mega-cycle, the Rajasthan Royals possess one of the strongest domestic batting platforms in the league with <strong>Sanju Samson, Yashasvi Jaiswal, Riyan Parag, and Dhruv Jurel</strong>. However, empirical analysis of recent high-stakes playoff fixtures highlights three distinct tactical gaps that have consistently separated RR from championship contention:
+        </p>
+        <ul style="margin: 10px 0 10px 20px; font-size: 12px; color: var(--text-secondary);">
+          <li><strong>Death-Overs Run Leakage (Overs 17–20):</strong> RR has heavily over-relied on Sandeep Sharma. When Sandeep is tackled or injured, the lack of a world-class defensive cutter or yorker specialist leaves the team vulnerable.</li>
+          <li><strong>Middle-Overs Choke at Sawai Mansingh Stadium (Jaipur):</strong> The massive square boundaries in Jaipur demand an elite restrictive spinner who concedes &lt; 6.50 rpo under pressure, suffocating opposition run chases.</li>
+          <li><strong>Late-Innings Boundary Strike Power:</strong> While Shimron Hetmyer and Dhruv Jurel are exceptional, adding a 160+ strike-rate finisher who maintains positive acceleration under crisis will transform RR's death batting.</li>
+        </ul>
+      </div>
+
+      <!-- Tactical Targets Matrix -->
+      <div class="section-card">
+        <div class="section-title">
+          <span>Target Portfolio: How Our Pressure Leaders Strengthen Rajasthan Royals</span>
+        </div>
+
+        <div class="targets-grid">
+
+          <!-- Target 1: Mitchell Santner -->
+          <div class="target-card">
+            <div class="target-header">
+              <div>
+                <div class="target-name">Mitchell Santner</div>
+                <div class="role-sub">Middle-Overs Choke / Left-Arm Spin • NZ</div>
+              </div>
+              <span class="target-priority p-tier1">Priority Tier 1</span>
+            </div>
+            <div class="target-stats">
+              <span>HP Econ: <strong>6.23</strong></span> | 
+              <span>Drop-Off: <strong>1.04</strong></span> | 
+              <span>Saved: <strong>+276.0 runs</strong></span>
+            </div>
+            <div class="target-fit">
+              <strong>Tactical Fit for RR:</strong> Santner boasts the <em>highest cumulative runs saved in world cricket (+276.0)</em>. At the large Sawai Mansingh Stadium in Jaipur, Santner’s subtle trajectory changes and defensive accuracy would provide RR with a devastating 7–15 over chokehold, while also strengthening the lower-order batting depth at #8.
+            </div>
+          </div>
+
+          <!-- Target 2: Tim David -->
+          <div class="target-card">
+            <div class="target-header">
+              <div>
+                <div class="target-name">Tim David</div>
+                <div class="role-sub">Death-Overs Finisher • AUS</div>
+              </div>
+              <span class="target-priority p-tier1">Priority Tier 1</span>
+            </div>
+            <div class="target-stats">
+              <span>HP SR: <strong>166.1</strong></span> | 
+              <span>HP Balls: <strong>735</strong></span> | 
+              <span>Added: <strong>+364.9 runs</strong></span>
+            </div>
+            <div class="target-fit">
+              <strong>Tactical Fit for RR:</strong> David is the undisputed #1 high-pressure batter globally, generating +364.9 runs above replacement. Pairing Tim David at #6 alongside Shimron Hetmyer and Dhruv Jurel gives RR the most lethal 17–20 over finishing trio in the IPL, eliminating the recurring problem of stalling in tight chases.
+            </div>
+          </div>
+
+          <!-- Target 3: Mustafizur Rahman -->
+          <div class="target-card">
+            <div class="target-header">
+              <div>
+                <div class="target-name">Mustafizur Rahman</div>
+                <div class="role-sub">Death-Overs Specialist / Left-Arm Pace • BAN</div>
+              </div>
+              <span class="target-priority p-tier2">Tactical Buy</span>
+            </div>
+            <div class="target-stats">
+              <span>HP Econ: <strong>7.27</strong></span> | 
+              <span>HP Balls: <strong>884</strong></span> | 
+              <span>Saved: <strong>+113.7 runs</strong></span>
+            </div>
+            <div class="target-fit">
+              <strong>Tactical Fit for RR:</strong> Former RR champion who bowled 884 high-pressure death balls at 7.27 rpo. His deceptive off-cutters and wide yorkers provide the exact death-overs complement to Sandeep Sharma, offering budget-efficient insurance in the auction.
+            </div>
+          </div>
+
+          <!-- Target 4: Akeal Hosein -->
+          <div class="target-card">
+            <div class="target-header">
+              <div>
+                <div class="target-name">Akeal Hosein</div>
+                <div class="role-sub">Powerplay & Middle Spin Enforcer • WI</div>
+              </div>
+              <span class="target-priority p-steal">Value Steal</span>
+            </div>
+            <div class="target-stats">
+              <span>HP Econ: <strong>6.75</strong></span> | 
+              <span>Drop-Off: <strong>1.18</strong></span> | 
+              <span>Saved: <strong>+146.9 runs</strong></span>
+            </div>
+            <div class="target-fit">
+              <strong>Tactical Fit for RR:</strong> Concedes just 6.75 rpo under pressure. Can bowl in the Powerplay (Overs 1–6) alongside Trent Boult/Jofra Archer, allowing Sanju Samson tactical flexibility to attack early without leaking runs.
+            </div>
+          </div>
+
+          <!-- Target 5: Naman Dhir -->
+          <div class="target-card">
+            <div class="target-header">
+              <div>
+                <div class="target-name">Naman Dhir</div>
+                <div class="role-sub">Anti-Fragile Middle Enforcer • IND</div>
+              </div>
+              <span class="target-priority p-steal">Domestic Target</span>
+            </div>
+            <div class="target-stats">
+              <span>HP SR: <strong>180.9</strong></span> | 
+              <span>Drop-Off: <strong>1.25</strong></span> | 
+              <span>Added: <strong>+176.4 runs</strong></span>
+            </div>
+            <div class="target-fit">
+              <strong>Tactical Fit for RR:</strong> Dhir possesses the highest crisis strike-rate acceleration in India (+35.7 SR jump to 180.9). Offers an explosive Indian batting option who can float between #4 and #6, easing the scoring burden on Samson and Jaiswal.
+            </div>
+          </div>
+
+          <!-- Target 6: Matheesha Pathirana -->
+          <div class="target-card">
+            <div class="target-header">
+              <div>
+                <div class="target-name">Matheesha Pathirana</div>
+                <div class="role-sub">Express Slinger / Death Specialist • SL</div>
+              </div>
+              <span class="target-priority p-tier1">Marquee Target</span>
+            </div>
+            <div class="target-stats">
+              <span>HP Econ: <strong>7.45</strong></span> | 
+              <span>HP Wkts: <strong>46</strong></span> | 
+              <span>Saved: <strong>+76.7 runs</strong></span>
+            </div>
+            <div class="target-fit">
+              <strong>Tactical Fit for RR:</strong> Searing 150 km/h yorkers under pressure. Solves RR's death-overs strike problem by capturing critical wickets in the 18th and 20th overs, giving RR a genuine Lasith Malinga-style enforcer.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Projected Best XI -->
+      <div class="section-card">
+        <div class="section-title">
+          <span>Projected Rajasthan Royals "Pressure-Proof" Playing XI (IPL 2027)</span>
+        </div>
+        <p>Combining RR's proven core with our top-ranked statistical targets creates an elite, balanced lineup constructed specifically for high-pressure execution:</p>
+
+        <div class="best-xi-card">
+          <div class="xi-grid">
+            <div class="xi-slot">
+              <div>
+                <div class="xi-pos">1. Opener (Retained)</div>
+                <div class="xi-player">Yashasvi Jaiswal</div>
+              </div>
+              <div class="xi-type">170.7 HP SR • Anti-Fragile</div>
+            </div>
+            <div class="xi-slot">
+              <div>
+                <div class="xi-pos">2. Opener / Keeper (Overseas Target)</div>
+                <div class="xi-player">Phil Salt / Jos Buttler</div>
+              </div>
+              <div class="xi-type">164.4 HP SR • PP Enforcer</div>
+            </div>
+            <div class="xi-slot">
+              <div>
+                <div class="xi-pos">3. Captain & Top Anchor (Retained)</div>
+                <div class="xi-player">Sanju Samson (C/WK)</div>
+              </div>
+              <div class="xi-type">Core Anchor & Playmaker</div>
+            </div>
+            <div class="xi-slot">
+              <div>
+                <div class="xi-pos">4. Middle Rebuilder (Retained)</div>
+                <div class="xi-player">Riyan Parag</div>
+              </div>
+              <div class="xi-type">Middle Phase Spin Hitter</div>
+            </div>
+            <div class="xi-slot">
+              <div>
+                <div class="xi-pos">5. Crisis Accelerators (Target / Retained)</div>
+                <div class="xi-player">Naman Dhir / Shimron Hetmyer</div>
+              </div>
+              <div class="xi-type">180.9 HP SR • Pressure Spiker</div>
+            </div>
+            <div class="xi-slot">
+              <div>
+                <div class="xi-pos">6. Finisher & Closer (Auction Target)</div>
+                <div class="xi-player">Tim David (Rank 1 Batter)</div>
+              </div>
+              <div class="xi-type">166.1 HP SR • +364.9 Runs Added</div>
+            </div>
+            <div class="xi-slot">
+              <div>
+                <div class="xi-pos">7. Wicket-Keeper Finisher (Retained)</div>
+                <div class="xi-player">Dhruv Jurel</div>
+              </div>
+              <div class="xi-type">Death Running & Boundary Striker</div>
+            </div>
+            <div class="xi-slot">
+              <div>
+                <div class="xi-pos">8. Choke Spin & Batting (Auction Target)</div>
+                <div class="xi-player">Mitchell Santner (Rank 4 Bowler)</div>
+              </div>
+              <div class="xi-type">6.23 HP Econ • +276.0 Runs Saved</div>
+            </div>
+            <div class="xi-slot">
+              <div>
+                <div class="xi-pos">9. Death Precision Pace (Retained)</div>
+                <div class="xi-player">Sandeep Sharma</div>
+              </div>
+              <div class="xi-type">Yorker Execution Master</div>
+            </div>
+            <div class="xi-slot">
+              <div>
+                <div class="xi-pos">10. Express Death Bowler (Auction Target)</div>
+                <div class="xi-player">Mustafizur Rahman / Pathirana</div>
+              </div>
+              <div class="xi-type">7.27 HP Econ • Cutter Specialist</div>
+            </div>
+            <div class="xi-slot">
+              <div>
+                <div class="xi-pos">11. Powerplay Strike Bowler (Target/Core)</div>
+                <div class="xi-player">Avesh Khan / Kuldeep Sen</div>
+              </div>
+              <div class="xi-type">High Pace & Hard Lengths</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== TAB 2: MOST RELIABLE BOWLERS ==================== -->
+    <div id="bowlers-top10" class="tab-pane">
+      <div class="section-card">
+        <div class="section-title">
+          <span>Master Top 10 High-Pressure Bowlers (All Playing Roles)</span>
+          <span style="font-size:11px; font-weight:600; color:var(--text-secondary);">Baseline HP Econ: 8.03 rpo</span>
+        </div>
+        <p>Ranked by cumulative high-pressure runs saved relative to replacement level, scaled by competition tier weighting:</p>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Rank</th>
+                <th>Player & Role</th>
+                <th class="num">Mat</th>
+                <th class="num">Balls</th>
+                <th class="num">Wkts</th>
+                <th class="num">Overall Econ</th>
+                <th class="num">HP Balls</th>
+                <th class="num">HP Econ</th>
+                <th class="num">Drop-Off</th>
+                <th class="num">HP Runs Saved</th>
+                <th class="num">Pressure Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-1">1</span></td>
+                <td><span class="player-cell">Sunil Narine</span><br><span class="role-sub">Middle-Overs Choke / Spin</span></td>
+                <td class="num">67</td>
+                <td class="num">1,553</td>
+                <td class="num">64</td>
+                <td class="num">6.92</td>
+                <td class="num">608</td>
+                <td class="num" style="font-weight:700; color:var(--rr-blue);">6.08</td>
+                <td class="num">1.31</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+257.2</td>
+                <td class="num"><span class="score-pill">100.0</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-2">2</span></td>
+                <td><span class="player-cell">Jasprit Bumrah</span><br><span class="role-sub">Powerplay Strike Bowler</span></td>
+                <td class="num">75</td>
+                <td class="num">1,780</td>
+                <td class="num">85</td>
+                <td class="num">7.16</td>
+                <td class="num">860</td>
+                <td class="num" style="font-weight:700; color:var(--rr-blue);">6.75</td>
+                <td class="num">0.57</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+224.5</td>
+                <td class="num"><span class="score-pill">96.5</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-3">3</span></td>
+                <td><span class="player-cell">Rashid Khan</span><br><span class="role-sub">Middle-Overs Choke / Spin</span></td>
+                <td class="num">122</td>
+                <td class="num">2,780</td>
+                <td class="num">153</td>
+                <td class="num">7.48</td>
+                <td class="num">1,277</td>
+                <td class="num" style="font-weight:700; color:var(--rr-blue);">7.17</td>
+                <td class="num">0.72</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+205.5</td>
+                <td class="num"><span class="score-pill">93.0</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">4</span></td>
+                <td><span class="player-cell">Mitchell Santner</span><br><span class="role-sub">Middle-Overs Choke / Spin</span></td>
+                <td class="num">83</td>
+                <td class="num">1,793</td>
+                <td class="num">87</td>
+                <td class="num">7.30</td>
+                <td class="num">789</td>
+                <td class="num" style="font-weight:700; color:var(--rr-blue);">6.23</td>
+                <td class="num">1.04</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+276.0</td>
+                <td class="num"><span class="score-pill">91.5</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">5</span></td>
+                <td><span class="player-cell">Varun Chakravarthy</span><br><span class="role-sub">Middle-Overs Choke / Spin</span></td>
+                <td class="num">95</td>
+                <td class="num">2,182</td>
+                <td class="num">135</td>
+                <td class="num">7.94</td>
+                <td class="num">1,069</td>
+                <td class="num" style="font-weight:700; color:var(--rr-blue);">7.14</td>
+                <td class="num">0.86</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+191.1</td>
+                <td class="num"><span class="score-pill">86.0</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">6</span></td>
+                <td><span class="player-cell">Kuldeep Yadav</span><br><span class="role-sub">Middle-Overs Choke / Spin</span></td>
+                <td class="num">89</td>
+                <td class="num">1,965</td>
+                <td class="num">118</td>
+                <td class="num">7.87</td>
+                <td class="num">782</td>
+                <td class="num" style="font-weight:700; color:var(--rr-blue);">6.89</td>
+                <td class="num">1.10</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+180.9</td>
+                <td class="num"><span class="score-pill">83.5</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">7</span></td>
+                <td><span class="player-cell">Akeal Hosein</span><br><span class="role-sub">Middle-Overs Choke / Spin</span></td>
+                <td class="num">79</td>
+                <td class="num">1,734</td>
+                <td class="num">79</td>
+                <td class="num">7.60</td>
+                <td class="num">612</td>
+                <td class="num" style="font-weight:700; color:var(--rr-blue);">6.75</td>
+                <td class="num">1.18</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+146.9</td>
+                <td class="num"><span class="score-pill">78.0</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">8</span></td>
+                <td><span class="player-cell">Axar Patel</span><br><span class="role-sub">Middle-Overs Choke / Spin</span></td>
+                <td class="num">136</td>
+                <td class="num">2,707</td>
+                <td class="num">120</td>
+                <td class="num">7.88</td>
+                <td class="num">1,154</td>
+                <td class="num" style="font-weight:700; color:var(--rr-blue);">7.51</td>
+                <td class="num">0.86</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+117.3</td>
+                <td class="num"><span class="score-pill">73.0</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">9</span></td>
+                <td><span class="player-cell">Mustafizur Rahman</span><br><span class="role-sub">Death Overs Specialist</span></td>
+                <td class="num">71</td>
+                <td class="num">1,646</td>
+                <td class="num">79</td>
+                <td class="num">7.62</td>
+                <td class="num">884</td>
+                <td class="num" style="font-weight:700; color:var(--rr-blue);">7.27</td>
+                <td class="num">0.40</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+113.7</td>
+                <td class="num"><span class="score-pill">71.0</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">10</span></td>
+                <td><span class="player-cell">Shaheen Shah Afridi</span><br><span class="role-sub">Powerplay Strike Bowler</span></td>
+                <td class="num">47</td>
+                <td class="num">1,036</td>
+                <td class="num">65</td>
+                <td class="num">7.89</td>
+                <td class="num">526</td>
+                <td class="num" style="font-weight:700; color:var(--rr-blue);">6.83</td>
+                <td class="num">0.52</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+106.9</td>
+                <td class="num"><span class="score-pill">68.5</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 3: MOST RELIABLE BATTERS ==================== -->
+    <div id="batters-top10" class="tab-pane">
+      <div class="section-card">
+        <div class="section-title">
+          <span>Master Top 10 High-Pressure Batters (All Playing Roles)</span>
+          <span style="font-size:11px; font-weight:600; color:var(--text-secondary);">Baseline HP SR: 126.4</span>
+        </div>
+        <p>Ranked by cumulative high-pressure runs added relative to replacement level, scaled by competition tier weighting:</p>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="text-align:center;">Rank</th>
+                <th>Player & Role</th>
+                <th class="num">Mat</th>
+                <th class="num">BF</th>
+                <th class="num">Runs</th>
+                <th class="num">Overall SR</th>
+                <th class="num">HP Balls</th>
+                <th class="num">HP SR</th>
+                <th class="num">Drop-Off</th>
+                <th class="num">HP Runs Added</th>
+                <th class="num">Pressure Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-1">1</span></td>
+                <td><span class="player-cell">Tim David</span><br><span class="role-sub">Death Finisher</span></td>
+                <td class="num">98</td>
+                <td class="num">1,293</td>
+                <td class="num">2,178</td>
+                <td class="num">168.4</td>
+                <td class="num">735</td>
+                <td class="num" style="font-weight:700; color:var(--rr-pink);">166.1</td>
+                <td class="num">0.97</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+364.9</td>
+                <td class="num"><span class="score-pill">100.0</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-2">2</span></td>
+                <td><span class="player-cell">Suryakumar Yadav</span><br><span class="role-sub">Middle-Order Engine</span></td>
+                <td class="num">139</td>
+                <td class="num">2,848</td>
+                <td class="num">4,588</td>
+                <td class="num">161.1</td>
+                <td class="num">1,061</td>
+                <td class="num" style="font-weight:700; color:var(--rr-pink);">150.3</td>
+                <td class="num">0.88</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+316.7</td>
+                <td class="num"><span class="score-pill">94.2</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-3">3</span></td>
+                <td><span class="player-cell">Nicholas Pooran</span><br><span class="role-sub">Middle-Order Engine</span></td>
+                <td class="num">115</td>
+                <td class="num">2,091</td>
+                <td class="num">3,098</td>
+                <td class="num">148.2</td>
+                <td class="num">957</td>
+                <td class="num" style="font-weight:700; color:var(--rr-pink);">148.2</td>
+                <td class="num">0.94</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+269.9</td>
+                <td class="num"><span class="score-pill">88.5</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">4</span></td>
+                <td><span class="player-cell">David Miller</span><br><span class="role-sub">Middle-Order Engine</span></td>
+                <td class="num">81</td>
+                <td class="num">1,338</td>
+                <td class="num">1,911</td>
+                <td class="num">142.8</td>
+                <td class="num">764</td>
+                <td class="num" style="font-weight:700; color:var(--rr-pink);">150.4</td>
+                <td class="num">1.04</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+241.0</td>
+                <td class="num"><span class="score-pill">85.0</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">5</span></td>
+                <td><span class="player-cell">Andre Russell</span><br><span class="role-sub">Middle-Order Engine</span></td>
+                <td class="num">57</td>
+                <td class="num">785</td>
+                <td class="num">1,254</td>
+                <td class="num">159.7</td>
+                <td class="num">537</td>
+                <td class="num" style="font-weight:700; color:var(--rr-pink);">160.0</td>
+                <td class="num">1.15</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+235.9</td>
+                <td class="num"><span class="score-pill">84.2</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">6</span></td>
+                <td><span class="player-cell">Heinrich Klaasen</span><br><span class="role-sub">Middle-Order Engine</span></td>
+                <td class="num">72</td>
+                <td class="num">1,480</td>
+                <td class="num">2,363</td>
+                <td class="num">159.7</td>
+                <td class="num">634</td>
+                <td class="num" style="font-weight:700; color:var(--rr-pink);">152.7</td>
+                <td class="num">0.84</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+223.0</td>
+                <td class="num"><span class="score-pill">82.5</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">7</span></td>
+                <td><span class="player-cell">Rovman Powell</span><br><span class="role-sub">Middle-Order Engine</span></td>
+                <td class="num">100</td>
+                <td class="num">1,651</td>
+                <td class="num">2,288</td>
+                <td class="num">138.6</td>
+                <td class="num">1,005</td>
+                <td class="num" style="font-weight:700; color:var(--rr-pink);">144.1</td>
+                <td class="num">1.07</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+220.4</td>
+                <td class="num"><span class="score-pill">81.9</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">8</span></td>
+                <td><span class="player-cell">Dinesh Karthik</span><br><span class="role-sub">Death Finisher</span></td>
+                <td class="num">61</td>
+                <td class="num">683</td>
+                <td class="num">1,069</td>
+                <td class="num">156.5</td>
+                <td class="num">468</td>
+                <td class="num" style="font-weight:700; color:var(--rr-pink);">157.7</td>
+                <td class="num">0.80</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+190.1</td>
+                <td class="num"><span class="score-pill">76.5</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">9</span></td>
+                <td><span class="player-cell">Naman Dhir</span><br><span class="role-sub">Middle-Order Engine</span></td>
+                <td class="num">46</td>
+                <td class="num">603</td>
+                <td class="num">992</td>
+                <td class="num">164.5</td>
+                <td class="num">262</td>
+                <td class="num" style="font-weight:700; color:var(--rr-pink);">180.9</td>
+                <td class="num">1.25</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+176.4</td>
+                <td class="num"><span class="score-pill">74.0</span></td>
+              </tr>
+              <tr>
+                <td style="text-align:center;"><span class="badge-rank rk-other">10</span></td>
+                <td><span class="player-cell">Abhishek Sharma</span><br><span class="role-sub">Top-Order Anchor / PP</span></td>
+                <td class="num">134</td>
+                <td class="num">2,436</td>
+                <td class="num">4,332</td>
+                <td class="num">177.8</td>
+                <td class="num">472</td>
+                <td class="num" style="font-weight:700; color:var(--rr-pink);">156.4</td>
+                <td class="num">0.83</td>
+                <td class="num" style="font-weight:700; color:var(--success);">+173.6</td>
+                <td class="num"><span class="score-pill">73.5</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 4: METHODOLOGY ==================== -->
+    <div id="methodology" class="tab-pane">
+      <div class="section-card">
+        <div class="section-title">
+          <span>The Phase-Normalized Pressure Index (P-NPI) Formulation</span>
+        </div>
+        <p>
+          Every single delivery in our 199,029-ball dataset is dynamically scored from 0 to 100 based on situational crisis:
+        </p>
+        <div class="formula-callout">
+          P-NPI = S<sub>wkt</sub><sup>phase</sup> + S<sub>rr</sub> + 15.0
+        </div>
+        <p><strong>Where:</strong></p>
+        <ul style="margin: 8px 0 12px 20px; font-size: 11.5px; line-height: 1.6;">
+          <li><strong>Phase-Calibrated Wicket Crisis (S<sub>wkt</sub><sup>phase</sup>):</strong> Powerplay: min(40, Wickets × 20.0); Middle: min(40, W/5.0 × 40.0); Death: min(40, W/7.0 × 40.0).</li>
+          <li><strong>Run Rate Pressure (S<sub>rr</sub>):</strong> In chases: min(40, (RRR - CRR) × 8.0). In 1st innings: min(25, (Par Rate - CRR) × 6.0).</li>
+          <li><strong>Thresholds:</strong> High Pressure (HP) ≥ 50.0 (34.3% of deliveries); Low Pressure (LP) ≤ 30.0.</li>
+        </ul>
+
+        <div class="section-title" style="margin-top:20px;">
+          <span>Cumulative Runs Saved / Added Formulations</span>
+        </div>
+        <div class="formula-callout">
+          HP Runs Saved = &sum;<sub>d &isin; HP</sub> [ (8.03 / 6) &minus; RunsConceded<sub>d</sub> ] &times; W<sub>tier</sub>
+        </div>
+        <div class="formula-callout">
+          HP Runs Added = &sum;<sub>d &isin; HP</sub> [ RunsScored<sub>d</sub> &minus; (126.4 / 100) ] &times; W<sub>tier</sub>
+        </div>
+        <p style="font-size: 11.5px; color: var(--text-secondary);">
+          Competition Tier Weights (W<sub>tier</sub>): IPL = 1.30x, Tier-1 Bilaterals & World Cups = 1.10x, Associate Tournaments = 0.75x.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    Antigravity Sports Intelligence • Rajasthan Royals IPL 2027 Auction Analytics Strategy • Based on 199,029 Regular Deliveries across 842 Matches
+  </footer>
+
+  <script>
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>
